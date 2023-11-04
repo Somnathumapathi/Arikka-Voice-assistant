@@ -1,6 +1,8 @@
 import 'package:arikka/text_box.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import './const.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,6 +13,42 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final speechToText = SpeechToText();
+  String lastWords = '';
+  @override
+  void initState() {
+    super.initState();
+    initSpeechToText();
+  }
+
+  Future<void> initSpeechToText() async {
+    await speechToText.initialize();
+    setState(() {});
+  }
+
+  Future<void> startListening() async {
+    await speechToText.listen(onResult: onSpeechResult);
+    setState(() {});
+  }
+
+  Future<void> stopListening() async {
+    await speechToText.stop();
+    setState(() {});
+  }
+
+  void onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      lastWords = result.recognizedWords;
+      print(lastWords);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    speechToText.stop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final textBoxText = textbox;
@@ -90,13 +128,25 @@ class _HomeScreenState extends State<HomeScreen> {
             text: textBoxText[4],
             color: Colors.cyan,
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           )
         ]),
       ),
-      floatingActionButton:
-          FloatingActionButton(onPressed: () {}, child: const Icon(Icons.mic)),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            if (await speechToText.hasPermission &&
+                speechToText.isNotListening) {
+              await startListening();
+              print('started listening');
+            } else if (speechToText.isListening) {
+              speechToText.stop();
+              print('stopped listening');
+            } else {
+              initSpeechToText();
+            }
+          },
+          child: const Icon(Icons.mic)),
     );
   }
 }
