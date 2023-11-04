@@ -1,3 +1,4 @@
+import 'package:arikka/openai.dart';
 import 'package:arikka/text_box.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final OpenAi openai = OpenAi();
   final speechToText = SpeechToText();
   String lastWords = '';
   @override
@@ -140,8 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
               await startListening();
               print('started listening');
             } else if (speechToText.isListening) {
-              speechToText.stop();
-              print('stopped listening');
+              final speech = await openai.isImagePrompt(lastWords);
+              print(speech);
+              await stopListening();
             } else {
               initSpeechToText();
             }
