@@ -57,7 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // final heretext = hereText;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Arikka Voice Assistant'),
+        title: const Text('Arikka Voice Assistant AI'),
+        leading: const Icon(Icons.mic),
       ),
       body: SingleChildScrollView(
         child: Column(children: [
