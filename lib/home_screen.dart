@@ -143,8 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
               await startListening();
               print('started listening');
             } else if (speechToText.isListening) {
-              final speech = await openai.isImagePrompt(lastWords);
-              print(speech);
+              final result = await openai.isImagePrompt(lastWords);
+              print(result);
               await stopListening();
             } else {
               initSpeechToText();

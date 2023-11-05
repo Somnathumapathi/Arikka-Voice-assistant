@@ -1,7 +1,7 @@
 final List<String> textbox = [
   "Hi! I'm Arikka, your voice assistant AI",
   "You can ask me for any information you want",
-  "You can ask me to draw any images  ",
+  "You can ask me to generate any images  ",
   "Can you tell me the history of Arikkamedu in Pondichery",
   "Can you draw a tiger wearing a helmet and driving a bike"
 ];
