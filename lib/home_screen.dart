@@ -1,11 +1,12 @@
+import 'package:arikka/homescreen_body.dart';
 import 'package:arikka/openai.dart';
-import 'package:arikka/text_box.dart';
+import 'package:arikka/result_box.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import './const.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +20,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final speechToText = SpeechToText();
   final flutterTts = FlutterTts();
   String lastWords = '';
+  String? generatedContent;
+  String? generatedImageUrl;
+  bool isContentGenerated = false;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +51,21 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+  Future<void> showDialoge(String result) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        if (result.contains("https")) {
+          return ResultImageBox(
+            contentUrl: result,
+          );
+        } else {
+          return ResultTextBox(contentText: result);
+        }
+      },
+    );
+  }
+
   void onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       lastWords = result.recognizedWords;
@@ -66,7 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textBoxText = textbox;
     // final heretext = hereText;
     return Scaffold(
       appBar: AppBar(
@@ -84,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: const EdgeInsets.only(top: 10),
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color.fromARGB(255, 22, 1, 26),
+                    color: Color.fromARGB(255, 16, 1, 62),
                     image: DecorationImage(
                       image: AssetImage("assets/images/Logo-1.png"),
                     ),
@@ -96,57 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 25,
           ),
-          TextBox(
-            text: textBoxText[0],
-            color: Colors.blue,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            margin: const EdgeInsets.only(left: 15),
-            child: Text(
-              hereText,
-              style: GoogleFonts.aBeeZee(
-                  color: const Color.fromARGB(255, 227, 231, 244),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18),
-            ),
-          ),
-          TextBox(
-            text: textBoxText[1],
-            color: Colors.green,
-          ),
-          TextBox(
-            text: textBoxText[2],
-            color: Colors.yellow,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            margin: const EdgeInsets.only(left: 15),
-            child: Text(
-              samPromptText,
-              style: GoogleFonts.aBeeZee(
-                  color: const Color.fromARGB(255, 227, 231, 244),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18),
-            ),
-          ),
-          TextBox(
-            text: textBoxText[3],
-            color: Colors.cyan,
-          ),
-          TextBox(
-            text: textBoxText[4],
-            color: Colors.cyan,
-          ),
-          const SizedBox(
-            height: 30,
-          )
+          const HomeScreenBody()
         ]),
       ),
       floatingActionButton: FloatingActionButton(
@@ -157,7 +126,21 @@ class _HomeScreenState extends State<HomeScreen> {
               print('started listening');
             } else if (speechToText.isListening) {
               final result = await openai.isImagePrompt(lastWords);
-              await systemSpeak(result);
+              if (result.contains("https")) {
+                generatedImageUrl = result;
+                generatedContent = null;
+                isContentGenerated = true;
+              } else {
+                generatedImageUrl = null;
+                generatedContent = result;
+                await systemSpeak(result);
+                isContentGenerated = true;
+              }
+
+              if (isContentGenerated) {
+                showDialoge(result);
+              }
+
               print(result);
               await stopListening();
             } else {
