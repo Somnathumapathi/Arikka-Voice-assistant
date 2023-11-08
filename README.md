@@ -1,10 +1,11 @@
-Arikka is a voice assistant Ai which converts the users speech prompt to text and uses ai to provide required output.
+Arikka Voice Assistant AI is an intelligent voice-controlled assistant that allows users to interact with it using natural language. It can answer questions, provide information, and even generate images in response to user prompts.
 
-Features :
-> Convert speech prompt to text,
-> Provides answer for the propmt,
-> Reads the answer to the user,
-> Provides image if the propmt asked for an ai generated image.
+Features:
+
+- Speech recognition: The voice assistant can understand and process user speech input.
+- Question answering: It can answer questions and provide information based on the user's queries.
+- Image generation: The assistant can generate images in response to image-related prompts.
+- Voice output: Responses are read out loud to the user for a hands-free experience.
 
 Images of the app :
 
