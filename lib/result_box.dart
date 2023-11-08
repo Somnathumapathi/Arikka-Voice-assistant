@@ -11,9 +11,15 @@ class ResultImageBox extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 29, 1, 62),
       content: Container(
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.white),
-            borderRadius: BorderRadius.circular(8),
-            image: DecorationImage(image: NetworkImage(contentUrl))),
+          border: Border.all(color: Colors.white),
+          borderRadius: BorderRadius.circular(8),
+          image: DecorationImage(
+            image: NetworkImage(contentUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+        width: 400,
+        height: 300,
       ),
     );
   }

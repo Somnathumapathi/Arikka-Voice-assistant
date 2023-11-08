@@ -20,7 +20,7 @@ class OpenAi {
               {
                 "role": "user",
                 "content":
-                    "Is this prompt asking to generate an art or image or picture? Just tell yes or no."
+                    "Is this prompt asking to draw or generate an ai art or image or picture? Just tell yes or no."
               },
             ],
           },
@@ -28,10 +28,14 @@ class OpenAi {
       );
       print(res.body);
       if (res.statusCode == 200) {
-        String content = jsonDecode(res.body)['choices'][0]['content'];
-        content = content.trimRight();
+        if (jsonDecode(res.body)['choices'][0]['content'] == null) {
+          print("Response is null");
+        }
+        String content =
+            jsonDecode(res.body)['choices'][0]['message']['content'];
+        content = content.toLowerCase();
 
-        if (content == 'Yes.') {
+        if (content.contains("yes")) {
           final res = await dallEApi(prompt);
           return res;
         } else {
@@ -58,9 +62,11 @@ class OpenAi {
           {"model": "gpt-3.5-turbo", "messages": messages},
         ),
       );
+      print("chatGptApi - API Response: ${res.body}");
       if (res.statusCode == 200) {
-        String content = jsonDecode(res.body)['choices'][0]['content'];
-        content = content.trimRight();
+        String content =
+            jsonDecode(res.body)['choices'][0]['message']['content'];
+        content = content.trim();
 
         messages.add({'role': 'assistant', 'content': content});
         return content;
@@ -87,6 +93,7 @@ class OpenAi {
           },
         ),
       );
+      print("dallEApi - API Response: ${res.body}");
       if (res.statusCode == 200) {
         String imageUrl = jsonDecode(res.body)['data'][0]['url'];
         imageUrl = imageUrl.trimRight();
